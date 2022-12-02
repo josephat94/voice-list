@@ -1,16 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import useSpeechToText from "react-hook-speech-to-text";
 import { useDispatch, useSelector } from "react-redux";
 import { checkItem, setItems } from "../../store/reducers/list-reducer";
 import { RootState } from "../../store/store";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { PencilIcon } from "@heroicons/react/24/solid";
 const List = () => {
-  const { error, interimResult, results, startSpeechToText, stopSpeechToText } =
-    useSpeechToText({
-      continuous: true,
-      useLegacyResults: true,
-    });
   const { currentText, isRecording, items } = useSelector(
     (state: RootState) => state.list
   );
@@ -18,10 +12,10 @@ const List = () => {
 
   const [listName, setListName] = useState("Lista nueva...");
   const [enableListEdit, setEnableListEdit] = useState(false);
-  const [productName, setProductName] = useState(undefined);
+  const [productName, setProductName] = useState("");
   const dispatch = useDispatch();
-  const inputRef = useRef(null);
-  const listRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (listRef.current && listRef.current.focus) {
@@ -110,13 +104,15 @@ const List = () => {
                   onChange={(e) => setProductName(e.target.value)}
                 />
               ) : (
-                <p className={`${item.checked && "line-through opacity-60"}`}>{item.item}</p>
+                <p className={`${item.checked && "line-through opacity-60"}`}>
+                  {item.item}
+                </p>
               )}
             </div>
 
             <PencilIcon
               onClick={() => {
-                setProductName(item.item);
+                setProductName(item.item ?? "");
                 setEnableEdit(!enableEdit);
               }}
               className="text-[1rem] w-7 h-7 ml-4 text-red-400 cursor-pointer hover:scale-105"
